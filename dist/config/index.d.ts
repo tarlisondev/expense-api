@@ -5,6 +5,7 @@ declare const _default: {
         email: string | undefined;
         key: string | undefined;
         sheetId: string | undefined;
+        secret: string | undefined;
     };
 };
 export default _default;

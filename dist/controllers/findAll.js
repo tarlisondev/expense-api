@@ -1,52 +1,50 @@
-import { sheetData, findDataByYear, listYears, listCategories, listMonths, listMonthByExpenseAndInvoice } from '../services/google-service.js';
+import { createUserSheet, findUserByEmail, sheetData } from '../services/google-service.js';
+import { randomUUID } from 'crypto';
+import { comparePassword, hashPassword } from '../utils/bcrypt.js';
+import jwt from 'jsonwebtoken';
+import config from '../config/index.js';
 export const findAll = async (req, res) => {
     try {
-        const page = Number(req.query.page) || 1;
-        res.status(200).json({ data: await sheetData(page) });
+        res.status(200).json(await sheetData());
     }
     catch (error) {
         console.log(error);
     }
 };
-export const findDataByYearController = async (req, res) => {
+export const createUser = async (req, res) => {
+    const user = {
+        id: randomUUID().toString(),
+        name: 'sheetadmin',
+        email: 'sheetadmin',
+        password: await hashPassword('sheetadmin'),
+        createAt: new Date().toLocaleDateString().toString(),
+    };
     try {
-        const year = req.query.y;
-        res.status(200).json({ data: await findDataByYear(year) });
+        const newuser = await createUserSheet(user);
+        res.status(200).json(newuser);
     }
     catch (error) {
-        console.error(error);
+        console.log(error);
     }
 };
-export const listYearsController = async (req, res) => {
+export const LoginUser = async (req, res) => {
     try {
-        res.status(200).json({ data: await listYears() });
+        const { email, password } = req.body;
+        const user = await findUserByEmail(email);
+        if (user.length == 0) {
+            res.status(400).json({ data: 'User or Password invalid!' });
+        }
+        const verifyPassword = await comparePassword(password, user[0]?.password);
+        if (!verifyPassword) {
+            res.status(400).json({ data: 'User or Password invalid!' });
+        }
+        const token = jwt.sign({ email: user[0]?.email }, config.google.secret, { expiresIn: '30d' });
+        res.status(200).json({
+            user: user[0], token: token
+        });
     }
     catch (error) {
-        console.error(error);
-    }
-};
-export const listCategoriesController = async (req, res) => {
-    try {
-        res.status(200).json({ data: await listCategories() });
-    }
-    catch (error) {
-        console.error(error);
-    }
-};
-export const listMonthsController = async (req, res) => {
-    try {
-        res.status(200).json({ data: await listMonths() });
-    }
-    catch (error) {
-        console.error(error);
-    }
-};
-export const listMonthsByExpenseAndInvoiceController = async (req, res) => {
-    try {
-        res.status(200).json({ data: await listMonthByExpenseAndInvoice() });
-    }
-    catch (error) {
-        console.error(error);
+        console.log(error);
     }
 };
 //# sourceMappingURL=findAll.js.map

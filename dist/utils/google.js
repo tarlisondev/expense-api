@@ -10,9 +10,8 @@ const worksheet = new GoogleSpreadsheet(config.google.sheetId, serviceAccountAut
 const loadSheet = async (sheetName) => {
     await worksheet.loadInfo();
     const sheet = worksheet.sheetsByTitle[sheetName];
-    if (!sheet) {
+    if (!sheet)
         throw new Error(`sheet ${worksheet.title} not found`);
-    }
     return sheet;
 };
 export default loadSheet;

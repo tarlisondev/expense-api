@@ -1,57 +1,21 @@
 import loadSheet from "../utils/google.js";
-import { parsePriceBR } from "../utils/parsePriceBr.js";
-import { normalizeMes } from "../utils/normalize.js";
-const loadSheetToObject = async (sheetName, offset, limit) => {
-    const sheet = await loadSheet(sheetName);
+// Busca os dados na planilha e converte para formato de array de objeto
+const sheetToObject = async (sheetname, offset) => {
+    // Carrega os dado da planilha buscando pelo titulo da planilha
+    const sheet = await loadSheet(sheetname);
+    // retorna os dados de cada linha da planilha
     const rows = await sheet.getRows({ offset });
-    return rows.map(row => row.toObject());
+    // converte os dados para formato array de objetos
+    return await rows.map(row => row.toObject());
 };
-export const sheetData = async (page) => {
-    const sheetName = 'Despesas';
-    const limit = 100;
-    const offset = 4 + (page - 1) * limit;
-    return await loadSheetToObject(sheetName, offset, limit);
+export const sheetData = async () => await sheetToObject('Despesas', 4);
+export const createUserSheet = async (user) => {
+    const sheet = await loadSheet('user');
+    await sheet.addRow(user);
+    return await findUserByEmail(user.email);
 };
-export const findDataByYear = async (year) => {
-    const sheetName = 'Despesas';
-    const data = await loadSheetToObject(sheetName, 4);
-    const list = data.filter((item) => item.ano === year);
-    const mesesValidos = await listMonths();
-    const result = list.reduce((acc, item) => {
-        const mes = normalizeMes(item.mes); //item.mes;
-        const price = parsePriceBR(item.valor);
-        if (!acc[mes])
-            acc[mes] = 0;
-        acc[mes] += price;
-        return acc;
-    }, {});
-    const items = Object.keys(result)
-        .filter(key => mesesValidos.includes(key))
-        .map(key => ({
-        name: key,
-        expense: result[key]
-    }));
-    return items;
-};
-export const listYears = async () => {
-    const sheetName = 'Despesas';
-    const data = await loadSheetToObject(sheetName, 4);
-    return [...new Map(data.map(item => [item.ano, item.ano])).values()];
-};
-export const listCategories = async () => {
-    const sheetName = 'Despesas';
-    const data = await loadSheetToObject(sheetName, 4);
-    return [...new Map(data.map(item => [normalizeMes(item.categoria), normalizeMes(item.categoria)])).values()];
-};
-export const listMonths = async () => {
-    const sheetName = 'Despesas';
-    const data = await loadSheetToObject(sheetName, 4);
-    return [...new Map(data.map(item => [normalizeMes(item.mes), normalizeMes(item.mes)])).values()];
-};
-export const listMonthByExpenseAndInvoice = async () => {
-    const sheetName = 'report';
-    const data = await loadSheetToObject(sheetName, 1);
-    console.log(data);
-    return data;
+export const findUserByEmail = async (email) => {
+    const data = await sheetToObject('user', 0);
+    return data.filter(item => item.email === email);
 };
 //# sourceMappingURL=google-service.js.map
