@@ -8,7 +8,7 @@ const app = express();
 app.use(express.json());
 app.use(helmet());
 app.use(cors({
-    origin: ['*'],
+    origin: ['https://id-preview--d5c562a4-a3ba-4bcb-b52a-bd66c311853e.lovable.app', '*'],
     methods: ['GET', 'POST'],
 }));
 app.use('/api/v1', route);
