@@ -12,6 +12,7 @@ export const findAll = async (req, res) => {
 };
 export const LoginUser = async (req, res) => {
     try {
+        console.log(req.body);
         const email = req.body.email;
         const password = req.body.password;
         console.log(email, password);
