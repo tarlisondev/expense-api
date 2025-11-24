@@ -12,12 +12,12 @@ export const findAll = async (req, res) => {
 };
 export const LoginUser = async (req, res) => {
     try {
-        console.log(req.body);
+        if (!req.body) {
+            res.status(404).json({ data: 'body not fund' });
+        }
         const email = req.body.email;
         const password = req.body.password;
-        console.log(email, password);
         const user = await findUserByEmail(email);
-        console.log(user);
         if (user.length == 0) {
             res.status(400).json({ data: 'User or Password invalid!' });
         }
@@ -31,7 +31,7 @@ export const LoginUser = async (req, res) => {
         });
     }
     catch (error) {
-        console.log(error);
+        throw new Error('Error  sign ' + error);
     }
 };
 //# sourceMappingURL=findAll.js.map
