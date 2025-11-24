@@ -9,11 +9,6 @@ const sheetToObject = async (sheetname, offset) => {
     return await rows.map(row => row.toObject());
 };
 export const sheetData = async () => await sheetToObject('Despesas', 4);
-export const createUserSheet = async (user) => {
-    const sheet = await loadSheet('user');
-    await sheet.addRow(user);
-    return await findUserByEmail(user.email);
-};
 export const findUserByEmail = async (email) => {
     const data = await sheetToObject('user', 0);
     return data.filter(item => item.email === email);

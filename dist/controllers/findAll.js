@@ -1,27 +1,10 @@
-import { createUserSheet, findUserByEmail, sheetData } from '../services/google-service.js';
-import { randomUUID } from 'crypto';
-import { comparePassword, hashPassword } from '../utils/bcrypt.js';
+import { findUserByEmail, sheetData } from '../services/google-service.js';
+import { comparePassword } from '../utils/bcrypt.js';
 import jwt from 'jsonwebtoken';
 import config from '../config/index.js';
 export const findAll = async (req, res) => {
     try {
         res.status(200).json(await sheetData());
-    }
-    catch (error) {
-        console.log(error);
-    }
-};
-export const createUser = async (req, res) => {
-    const user = {
-        id: randomUUID().toString(),
-        name: 'sheetadmin',
-        email: 'sheetadmin',
-        password: await hashPassword('sheetadmin'),
-        createAt: new Date().toLocaleDateString().toString(),
-    };
-    try {
-        const newuser = await createUserSheet(user);
-        res.status(200).json(newuser);
     }
     catch (error) {
         console.log(error);
