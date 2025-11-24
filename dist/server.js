@@ -7,7 +7,7 @@ const app = express();
 // Middlewares
 app.use(express.json());
 app.use(helmet());
-app.use(cors({ origin: '*', methods: ['GET'] }));
+app.use(cors({ origin: '*', methods: ['GET', 'POST'] }));
 app.use('/api/v1', route);
 app.listen(config.port, () => console.info(`http://localhost:${config.port}`));
 //# sourceMappingURL=server.js.map
