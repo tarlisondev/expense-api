@@ -12,7 +12,8 @@ export const findAll = async (req, res) => {
 };
 export const LoginUser = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const email = req.body.email;
+        const password = req.body.password;
         const user = await findUserByEmail(email);
         if (user.length == 0) {
             res.status(400).json({ data: 'User or Password invalid!' });
